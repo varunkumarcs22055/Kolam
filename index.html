@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolam - Where Tradition Meets Math & Tech</title>
+    <meta name="description" content="Experience the mathematical beauty of Kolam patterns through modern technology, AR/VR experiences, and generative art.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+        
+        /* Custom animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4); }
+        }
+        
+        @keyframes drawLineSimple {
+            from { 
+                stroke-dashoffset: 1000; 
+                opacity: 0;
+            }
+            to { 
+                stroke-dashoffset: 0; 
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeInDot {
+            from { opacity: 0; transform: scale(0); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.95) 0%, 
+                rgba(30, 41, 59, 0.9) 50%, 
+                rgba(15, 23, 42, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(59, 130, 246, 0.03) 0%, 
+                rgba(139, 92, 246, 0.02) 50%, 
+                rgba(59, 130, 246, 0.03) 100%);
+            border-radius: 20px;
+            z-index: 0;
+        }
+        
+        .glass-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(59, 130, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(59, 130, 246, 0.8) 0%, 
+                rgba(139, 92, 246, 0.9) 50%, 
+                rgba(59, 130, 246, 0.8) 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.4) 50%, 
+                transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .process-step-glow:nth-child(1) .progress-fill { 
+            animation: fillProgress 2s ease-out 0.5s forwards;
+        }
+        .process-step-glow:nth-child(3) .progress-fill { 
+            animation: fillProgress 2s ease-out 2s forwards;
+        }
+        .process-step-glow:nth-child(5) .progress-fill { 
+            animation: fillProgress 2s ease-out 3.5s forwards;
+        }
+        .process-step-glow:nth-child(7) .progress-fill { 
+            animation: fillProgress 2s ease-out 5s forwards;
+        }
+        .process-step-glow:nth-child(9) .progress-fill { 
+            animation: fillProgress 2s ease-out 6.5s forwards;
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .process-card {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .process-card:nth-child(1) { animation-delay: 0.2s; }
+        .process-card:nth-child(2) { animation-delay: 0.4s; }
+        .process-card:nth-child(3) { animation-delay: 0.6s; }
+        .process-card:nth-child(4) { animation-delay: 0.8s; }
+        .process-card:nth-child(5) { animation-delay: 1.0s; }
+        
+        .process-step {
+            opacity: 1;
+            animation: fadeInUp 0.8s ease-out;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .process-step:nth-child(1) { animation-delay: 0.2s; }
+        .process-step:nth-child(3) { animation-delay: 0.4s; }
+        .process-step:nth-child(5) { animation-delay: 0.6s; }
+        .process-step:nth-child(7) { animation-delay: 0.8s; }
+        .process-step:nth-child(9) { animation-delay: 1.0s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes flow {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(300%);
+            }
+        }
+        
+        @keyframes stepGlow {
+            0%, 15% {
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 0 1px rgba(255, 255, 255, 0.05),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                transform: translateY(0);
+                border-color: rgba(59, 130, 246, 0.2);
+            }
+            5%, 10% {
+                box-shadow: 
+                    0 20px 50px rgba(0, 0, 0, 0.4),
+                    0 0 30px rgba(59, 130, 246, 0.5),
+                    0 0 0 1px rgba(59, 130, 246, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                transform: translateY(-5px);
+                border-color: rgba(59, 130, 246, 0.6);
+            }
+            100% {
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 0 1px rgba(255, 255, 255, 0.05),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                transform: translateY(0);
+                border-color: rgba(59, 130, 246, 0.2);
+            }
+        }
+        
+        @keyframes arrowFlow {
+            0%, 20% {
+                opacity: 0.3;
+            }
+            10% {
+                opacity: 1;
+                box-shadow: 0 0 20px currentColor;
+            }
+            100% {
+                opacity: 0.3;
+            }
+        }
+        
+        .process-step-glow {
+            animation: stepGlow 10s ease-in-out infinite;
+        }
+        
+        .process-step-glow:nth-child(1) { 
+            animation-delay: 0s; 
+        }
+        .process-step-glow:nth-child(3) { 
+            animation-delay: 1.5s; 
+        }
+        .process-step-glow:nth-child(5) { 
+            animation-delay: 3s; 
+        }
+        .process-step-glow:nth-child(7) { 
+            animation-delay: 4.5s; 
+        }
+        .process-step-glow:nth-child(9) { 
+            animation-delay: 6s; 
+        }
+        
+        .arrow-flow {
+            animation: arrowFlow 10s ease-in-out infinite;
+        }
+        
+        .arrow-flow:nth-child(2) { 
+            animation-delay: 0.7s; 
+        }
+        .arrow-flow:nth-child(4) { 
+            animation-delay: 2.2s; 
+        }
+        .arrow-flow:nth-child(6) { 
+            animation-delay: 3.7s; 
+        }
+        .arrow-flow:nth-child(8) { 
+            animation-delay: 5.2s; 
+        }
+        
+        .animate-flow {
+            animation: flow 2s ease-in-out infinite;
+        }
+        
+        .animation-delay-1 {
+            animation-delay: 0.5s;
+        }
+        
+        .animation-delay-2 {
+            animation-delay: 1s;
+        }
+        
+        .animation-delay-3 {
+            animation-delay: 1.5s;
+        }
+        
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .rotate {
+            animation: rotate 20s linear infinite;
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        .draw-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 3s ease-in-out forwards;
+        }
+        
+        .fade-in-dot {
+            animation: fadeInDot 0.5s ease-out forwards;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-text-cyan {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+        }
+        
+        /* Particle background */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: particleMove 15s linear infinite;
+        }
+        
+        @keyframes particleMove {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Kolam Canvas Styles */
+        .kolam-canvas {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .dot {
+            fill: #00f2fe;
+            opacity: 0;
+        }
+        
+        .connection-line {
+            stroke: #4facfe;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        /* Code animation */
+        .code-line {
+            opacity: 0;
+            animation: fadeInCode 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeInCode {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Geometric shapes */
+        .geometric-bg::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        .geometric-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: float 6s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'monospace'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'cyber-blue': '#00f2fe',
+                        'cyber-purple': '#4facfe',
+                        'dark-bg': '#0a0a0f',
+                        'card-bg': '#1a1a2e',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'slide-in-left': 'slideInLeft 0.8s ease-out',
+                        'slide-in-right': 'slideInRight 0.8s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gradient-to-br from-dark-bg via-gray-900 to-card-bg text-white overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-orbitron font-bold gradient-text">Kolam</h1>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-cyber-blue transition-colors duration-300 font-medium">Home</a>
+                        <a href="#generate" class="hover:text-cyber-blue transition-colors duration-300 font-medium">Generate</a>
+                        <a href="#arvr" class="hover:text-cyber-blue transition-colors duration-300 font-medium">AR/VR</a>
+                        <a href="#library" class="hover:text-cyber-blue transition-colors duration-300 font-medium">Library</a>
+                        <a href="#about" class="hover:text-cyber-blue transition-colors duration-300 font-medium">About</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white hover:text-cyber-blue transition-colors duration-300">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden glass-dark">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 hover:text-cyber-blue transition-colors duration-300">Home</a>
+                <a href="#generate" class="block px-3 py-2 hover:text-cyber-blue transition-colors duration-300">Generate</a>
+                <a href="#arvr" class="block px-3 py-2 hover:text-cyber-blue transition-colors duration-300">AR/VR</a>
+                <a href="#library" class="block px-3 py-2 hover:text-cyber-blue transition-colors duration-300">Library</a>
+                <a href="#about" class="block px-3 py-2 hover:text-cyber-blue transition-colors duration-300">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Kolam Demo -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        <!-- Full Screen Background Lotus Animation -->
+        <div class="absolute inset-0 z-0">
+            <svg id="hero-kolam-svg" width="100%" height="100%" viewBox="0 0 1200 800" class="absolute inset-0 opacity-25">
+                <!-- Background Kolam will be drawn here -->
+            </svg>
+        </div>
+        
+        <!-- Gradient overlay for text readability -->
+        <div class="absolute inset-0 bg-gradient-to-br from-dark-bg/30 via-transparent to-dark-bg/30 z-5"></div>
+        
+        <!-- Particle Background -->
+        <div class="particles absolute inset-0 z-5">
+            <div class="particle" style="left: 10%; width: 4px; height: 4px; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; width: 6px; height: 6px; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 30%; width: 3px; height: 3px; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 40%; width: 5px; height: 5px; animation-delay: 6s;"></div>
+            <div class="particle" style="left: 50%; width: 4px; height: 4px; animation-delay: 8s;"></div>
+            <div class="particle" style="left: 60%; width: 6px; height: 6px; animation-delay: 10s;"></div>
+            <div class="particle" style="left: 70%; width: 3px; height: 3px; animation-delay: 12s;"></div>
+            <div class="particle" style="left: 80%; width: 5px; height: 5px; animation-delay: 14s;"></div>
+            <div class="particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 16s;"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center space-y-8">
+                <!-- Main Title and Description -->
+                <div class="space-y-6">
+                    <h1 class="text-6xl md:text-8xl font-orbitron font-black leading-tight">
+                        <span class="gradient-text-cyan">Kolam</span>
+                    </h1>
+                    <h2 class="text-3xl md:text-4xl font-orbitron font-bold text-white/90">
+                        Where Tradition Meets Math & Tech
+                    </h2>
+                    <div class="max-w-4xl mx-auto space-y-4">
+                        <p class="text-xl md:text-2xl text-gray-300 leading-relaxed">
+                            Discover the ancient art of <strong class="text-cyber-blue">Kolam</strong> through the lens of modern mathematics and technology.
+                        </p>
+                        <p class="text-lg md:text-xl text-gray-400 leading-relaxed">
+                            Experience sacred geometry, symmetrical patterns, and cultural heritage reimagined with cutting-edge algorithms and interactive visualization.
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+                        <button class="bg-gradient-to-r from-cyber-blue to-purple-500 hover:from-purple-500 hover:to-cyber-blue px-10 py-5 rounded-xl font-semibold text-xl transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyber-blue/30">
+                            <i data-lucide="play-circle" class="w-7 h-7 inline mr-3"></i>
+                            Explore Kolams
+                        </button>
+                        <button class="border-2 border-cyber-blue hover:bg-cyber-blue hover:text-dark-bg px-10 py-5 rounded-xl font-semibold text-xl transition-all duration-300 hover:scale-105">
+                            <i data-lucide="info" class="w-7 h-7 inline mr-3"></i>
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Hidden SVG for demo functions -->
+                <svg id="kolam-svg" width="0" height="0" style="position: absolute; opacity: 0; pointer-events: none;">
+                    <!-- Hidden demo SVG for background functions -->
+                </svg>
+                
+                <!-- Hidden code display for demo functions -->
+                <div id="code-display" style="display: none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Process Flow Section -->
+    <section class="py-20 relative z-10 bg-gradient-to-br from-dark-bg via-purple-900/10 to-dark-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-6xl font-orbitron font-bold gradient-text mb-6">
+                    AI-Powered Creation Process
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Discover how artificial intelligence transforms traditional Kolam patterns through advanced computer vision and mathematical analysis
+                </p>
+            </div>
+            
+            <!-- Single Line Process Flow -->
+            <div class="relative max-w-7xl mx-auto px-4">
+                <div class="flex items-center justify-between space-x-2 overflow-hidden">
+                    <!-- Step 1: Input Analysis -->
+                    <div class="process-step process-step-glow group flex-1 min-w-0">
+                        <div class="glass-card p-6 text-center space-y-4 hover:scale-105 transition-all duration-500 relative">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-500/50">
+                                <i data-lucide="upload" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-orbitron font-bold text-white">Input Analysis</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">AI scans and processes the uploaded media content</p>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Animated Arrow 1 -->
+                    <div class="flex-shrink-0 arrow-flow">
+                        <div class="relative">
+                            <div class="w-8 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 w-4 h-full animate-flow"></div>
+                            </div>
+                            <div class="absolute right-0 top-0 w-0 h-0 border-l-4 border-l-purple-500 border-t-1 border-b-1 border-t-transparent border-b-transparent transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Feature Extraction -->
+                    <div class="process-step process-step-glow group flex-1 min-w-0">
+                        <div class="glass-card p-6 text-center space-y-4 hover:scale-105 transition-all duration-500">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/50">
+                                <i data-lucide="cpu" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-orbitron font-bold text-white">Feature Extraction</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">Neural networks identify key patterns and structures</p>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Animated Arrow 2 -->
+                    <div class="flex-shrink-0 arrow-flow">
+                        <div class="relative">
+                            <div class="w-8 h-1 bg-gradient-to-r from-purple-500 to-amber-400 rounded-full relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 w-4 h-full animate-flow animation-delay-1"></div>
+                            </div>
+                            <div class="absolute right-0 top-0 w-0 h-0 border-l-4 border-l-amber-400 border-t-1 border-b-1 border-t-transparent border-b-transparent transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Math Analysis -->
+                    <div class="process-step process-step-glow group flex-1 min-w-0">
+                        <div class="glass-card p-6 text-center space-y-4 hover:scale-105 transition-all duration-500">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-400/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-amber-400/50">
+                                <i data-lucide="calculator" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-orbitron font-bold text-white">Math Analysis</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">Geometric algorithms calculate precise parameters</p>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Animated Arrow 3 -->
+                    <div class="flex-shrink-0 arrow-flow">
+                        <div class="relative">
+                            <div class="w-8 h-1 bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 w-4 h-full animate-flow animation-delay-2"></div>
+                            </div>
+                            <div class="absolute right-0 top-0 w-0 h-0 border-l-4 border-l-emerald-400 border-t-1 border-b-1 border-t-transparent border-b-transparent transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Pattern Generation -->
+                    <div class="process-step process-step-glow group flex-1 min-w-0">
+                        <div class="glass-card p-6 text-center space-y-4 hover:scale-105 transition-all duration-500">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center shadow-lg shadow-emerald-400/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-emerald-400/50">
+                                <i data-lucide="refresh-cw" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-orbitron font-bold text-white">Pattern Generation</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">AI creates beautiful Kolam variations</p>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Animated Arrow 4 -->
+                    <div class="flex-shrink-0 arrow-flow">
+                        <div class="relative">
+                            <div class="w-8 h-1 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 w-4 h-full animate-flow animation-delay-3"></div>
+                            </div>
+                            <div class="absolute right-0 top-0 w-0 h-0 border-l-4 border-l-cyan-400 border-t-1 border-b-1 border-t-transparent border-b-transparent transform -translate-y-1/2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Final Output -->
+                    <div class="process-step process-step-glow group flex-1 min-w-0">
+                        <div class="glass-card p-6 text-center space-y-4 hover:scale-105 transition-all duration-500">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-400/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-cyan-400/50">
+                                <i data-lucide="monitor" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-orbitron font-bold text-white">Final Output</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">Stunning digital Kolam ready for display</p>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Responsive: Stack on smaller screens -->
+                <div class="lg:hidden">
+                    <div class="space-y-6 mt-8">
+                        <div class="text-center text-gray-400 text-sm">
+                            ↕️ Scroll to see full process on mobile
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Generation & AR/VR Section -->
+    <section id="features" class="py-20 relative z-10 bg-dark-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-6xl font-orbitron font-bold gradient-text mb-6">
+                    Experience Kolam
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Immerse yourself in the mathematical beauty of Kolam patterns through our innovative tools
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
+                <!-- Generate Kolam Card -->
+                <div id="generate" class="group glass-dark rounded-3xl p-8 lg:p-12 hover:scale-105 transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-400/20 cursor-pointer">
+                    <div class="text-center space-y-6">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-400/30">
+                            <i data-lucide="cpu" class="w-10 h-10 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-orbitron font-bold text-white group-hover:text-cyan-400 transition-colors duration-300">
+                            Generate Kolam
+                        </h3>
+                        <p class="text-gray-400 text-base leading-relaxed">
+                            Upload or set parameters, and watch your Kolam regenerate with mathematical beauty. 
+                            Our AI algorithms create infinite variations based on traditional patterns and sacred geometry.
+                        </p>
+                        <div class="pt-4">
+                            <a href="generate-kolam.html" target="_blank" class="inline-block">
+                                <button class="bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-blue-600 hover:to-cyan-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-sm">
+                                    Start Creating
+                                    <i data-lucide="arrow-right" class="w-4 h-4 inline ml-2"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolam Gallery Card -->
+                <div id="gallery" class="group glass-dark rounded-3xl p-8 lg:p-12 hover:scale-105 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-400/20 cursor-pointer">
+                    <div class="text-center space-y-6">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-emerald-400/30">
+                            <i data-lucide="gallery-horizontal" class="w-10 h-10 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-orbitron font-bold text-white group-hover:text-emerald-400 transition-colors duration-300">
+                            Kolam Gallery
+                        </h3>
+                        <p class="text-gray-400 text-base leading-relaxed">
+                            Explore authentic Kolam images from diverse Indian traditions. 
+                            Discover regional styles, festival designs, and sacred geometry from Tamil Nadu, Kerala, Andhra Pradesh and beyond.
+                        </p>
+                        <div class="pt-4">
+                            <a href="library/library.html" target="_blank" class="inline-block">
+                                <button class="bg-gradient-to-r from-emerald-400 to-green-600 hover:from-green-600 hover:to-emerald-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-sm">
+                                    View Gallery
+                                    <i data-lucide="arrow-right" class="w-4 h-4 inline ml-2"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AR/VR Experience Card -->
+                <div id="arvr" class="group glass-dark rounded-3xl p-8 lg:p-12 hover:scale-105 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 cursor-pointer">
+                    <div class="text-center space-y-6">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/30">
+                            <i data-lucide="glasses" class="w-10 h-10 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-orbitron font-bold text-white group-hover:text-purple-400 transition-colors duration-300">
+                            AR/VR Experience
+                        </h3>
+                        <p class="text-gray-400 text-base leading-relaxed">
+                            Step inside your Kolam with immersive augmented and virtual reality. 
+                            Walk through three-dimensional patterns and experience the spiritual geometry in new dimensions.
+                        </p>
+                        <div class="pt-4">
+                            <a href="ar-vr.html" target="_blank" class="inline-block">
+                                <button class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-pink-600 hover:to-purple-500 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-sm">
+                                    Enter VR
+                                    <i data-lucide="arrow-right" class="w-4 h-4 inline ml-2"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is Kolam Section -->
+    <section id="about-kolam" class="py-20 bg-gradient-to-b from-dark-bg to-card-bg relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-6xl font-orbitron font-bold gradient-text mb-6">
+                    What is Kolam?
+                </h2>
+                <p class="text-xl text-gray-400 max-w-4xl mx-auto">
+                    Discover the ancient art form that bridges mathematics, spirituality, and cultural heritage
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Content Side -->
+                <div class="space-y-8">
+                    <div class="glass-dark rounded-2xl p-8 space-y-6">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+                                <i data-lucide="circle-dot" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-orbitron font-bold text-white">Sacred Geometry</h3>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">
+                            Kolam is an ancient South Indian art form created with rice powder or chalk, drawn at the entrance of homes. 
+                            These intricate geometric patterns represent the cosmos, infinity, and the interconnectedness of all life.
+                        </p>
+                    </div>
+                    
+                    <div class="glass-dark rounded-2xl p-8 space-y-6">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                                <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-orbitron font-bold text-white">Cultural Heritage</h3>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">
+                            Passed down through generations, primarily by women, Kolam serves as daily meditation, 
+                            spiritual protection, and a way to welcome prosperity into homes. Each design carries deep cultural meaning.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Visual Side -->
+                <div class="space-y-8">
+                    <div class="glass-dark rounded-2xl p-8 space-y-6">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center">
+                                <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-orbitron font-bold text-white">Why We're Building This</h3>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">
+                            Our mission is to preserve and revitalize this ancient art through modern technology. 
+                            By combining AI with traditional knowledge, we're making Kolam accessible to new generations 
+                            while honoring its sacred origins.
+                        </p>
+                    </div>
+                    
+                    <div class="glass-dark rounded-2xl p-8 space-y-6">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-orbitron font-bold text-white">Digital Renaissance</h3>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">
+                            We're creating tools that help artists, students, and enthusiasts explore infinite variations, 
+                            understand mathematical principles, and experience Kolam in immersive new ways through AR/VR technology.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics or Key Points -->
+            <div class="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center glass-dark rounded-xl p-6">
+                    <div class="text-3xl font-orbitron font-bold gradient-text mb-2">2000+</div>
+                    <div class="text-gray-400">Years of Tradition</div>
+                </div>
+                <div class="text-center glass-dark rounded-xl p-6">
+                    <div class="text-3xl font-orbitron font-bold gradient-text mb-2">∞</div>
+                    <div class="text-gray-400">Possible Patterns</div>
+                </div>
+                <div class="text-center glass-dark rounded-xl p-6">
+                    <div class="text-3xl font-orbitron font-bold gradient-text mb-2">28+</div>
+                    <div class="text-gray-400">States & Regions</div>
+                </div>
+                <div class="text-center glass-dark rounded-xl p-6">
+                    <div class="text-3xl font-orbitron font-bold gradient-text mb-2">AI</div>
+                    <div class="text-gray-400">Enhanced</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Library Section -->
+    <section id="library" class="py-20 bg-card-bg relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-6xl font-orbitron font-bold gradient-text mb-6">
+                    Pattern Library
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Explore our curated collection of traditional and AI-generated Kolam patterns
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Kolam Pattern Cards -->
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-cyber-blue/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-cyber-blue/20 to-purple-500/20 flex items-center justify-center">
+                        <div class="w-16 h-16 border-4 border-cyber-blue rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-cyber-blue transition-colors duration-300">Lotus Mandala</h3>
+                        <p class="text-sm text-gray-400">Traditional 8-petal design</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rotate-45 opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-purple-400 transition-colors duration-300">Geometric Flow</h3>
+                        <p class="text-sm text-gray-400">Modern algorithmic pattern</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-green-500/20 to-teal-500/20 flex items-center justify-center">
+                        <div class="w-16 h-16 border-4 border-green-500 clip-path-triangle opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-green-400 transition-colors duration-300">Sacred Triangle</h3>
+                        <p class="text-sm text-gray-400">Ancient protective symbol</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-yellow-400 transition-colors duration-300">Solar Radiance</h3>
+                        <p class="text-sm text-gray-400">Festival celebration design</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-indigo-500/20 to-blue-500/20 flex items-center justify-center">
+                        <div class="grid grid-cols-3 gap-1">
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-blue-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-blue-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-blue-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-blue-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-indigo-400 transition-colors duration-300">Dot Matrix</h3>
+                        <p class="text-sm text-gray-400">Pulli Kolam style</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-red-500/20 to-pink-500/20 flex items-center justify-center">
+                        <div class="w-16 h-4 bg-gradient-to-r from-red-500 to-pink-500 opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-red-400 transition-colors duration-300">Linear Harmony</h3>
+                        <p class="text-sm text-gray-400">Minimalist modern take</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-teal-500/20 to-cyan-500/20 flex items-center justify-center">
+                        <div class="w-12 h-12 border-4 border-teal-500 rotate-45 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                            <div class="w-4 h-4 border-2 border-cyan-500 m-auto mt-2"></div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-teal-400 transition-colors duration-300">Nested Squares</h3>
+                        <p class="text-sm text-gray-400">Mathematical precision</p>
+                    </div>
+                </div>
+                
+                <div class="group glass-dark rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-gray-500/20 cursor-pointer">
+                    <div class="aspect-square bg-gradient-to-br from-gray-500/20 to-slate-500/20 flex items-center justify-center">
+                        <div class="text-4xl opacity-60 group-hover:opacity-100 transition-opacity duration-300">+</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2 group-hover:text-gray-400 transition-colors duration-300">Create New</h3>
+                        <p class="text-sm text-gray-400">Design your own pattern</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="glass hover:glass-dark px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105">
+                    <i data-lucide="grid-3x3" class="w-6 h-6 inline mr-2"></i>
+                    View All Patterns
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800 bg-dark-bg relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="text-2xl font-orbitron font-bold gradient-text mb-4">Kolam</h3>
+                <p class="text-gray-400 mb-6">Where Tradition Meets Math & Tech</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-cyber-blue transition-colors duration-300">
+                        <i data-lucide="github" class="w-6 h-6"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyber-blue transition-colors duration-300">
+                        <i data-lucide="twitter" class="w-6 h-6"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyber-blue transition-colors duration-300">
+                        <i data-lucide="linkedin" class="w-6 h-6"></i>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm mt-6">© 2025 Kolam App. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                // Close mobile menu if open
+                mobileMenu.classList.add('hidden');
+            });
+        });
+        
+        // Kolam Demo Functionality - Simplified Version
+        let demoRunning = false;
+        let demoStep = 0;
+        let animationElements = [];
+        let heroAnimationRunning = false;
+        let heroAnimationElements = [];
+        
+        function initKolamDemo() {
+            console.log('Initializing Complex Lotus Kolam Demo');
+            
+            const svg = document.getElementById('kolam-svg');
+            
+            if (!svg) {
+                console.error('Demo elements not found');
+                return;
+            }
+            
+            // Auto-start the complex demo after a short delay
+            setTimeout(() => {
+                startComplexLotusDemo();
+            }, 2000);
+        }
+        
+        function createComplexDotGrid() {
+            const svg = document.getElementById('kolam-svg');
+            if (!svg) return;
+            
+            // Clear existing content
+            svg.innerHTML = '';
+            animationElements = [];
+            
+            // Create a more complex 9x9 grid for intricate lotus
+            const gridSize = 9;
+            const spacing = 45;
+            const offsetX = 85;
+            const offsetY = 50;
+            
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    const x = offsetX + col * spacing;
+                    const y = offsetY + row * spacing;
+                    
+                    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    dot.setAttribute('cx', x);
+                    dot.setAttribute('cy', y);
+                    dot.setAttribute('r', '3');
+                    dot.setAttribute('fill', '#00f2fe');
+                    dot.setAttribute('opacity', '0');
+                    dot.setAttribute('id', `dot-${row}-${col}`);
+                    
+                    svg.appendChild(dot);
+                    animationElements.push(dot);
+                }
+            }
+            console.log('Complex grid created with 81 dots');
+        }
+        
+        async function startComplexLotusDemo() {
+            if (demoRunning) return;
+            
+            console.log('Starting complex lotus demo animation');
+            demoRunning = true;
+            
+            const codeDisplay = document.getElementById('code-display');
+            
+            // Clear code display
+            codeDisplay.innerHTML = '';
+            
+            // Create complex grid
+            createComplexDotGrid();
+            
+            // Step 1: Show dots with spiral pattern
+            await addCodeLine('# Complex Lotus Kolam - Traditional Design');
+            await delay(800);
+            await showDotsInSpiral();
+            await delay(1000);
+            
+            // Step 2: Create center mandala
+            await addCodeLine('# Step 1: Create center mandala (sacred geometry)');
+            await delay(500);
+            await drawCenterMandala();
+            await delay(1200);
+            
+            // Step 3: Inner lotus petals
+            await addCodeLine('lotus_center = draw_sacred_circle(grid[4][4])');
+            await delay(800);
+            await drawInnerLotus();
+            await delay(1000);
+            
+            // Step 4: Outer lotus layers
+            await addCodeLine('# Step 2: Add concentric lotus layers');
+            await delay(500);
+            await drawMiddleLotus();
+            await delay(1200);
+            
+            // Step 5: Protective borders
+            await addCodeLine('for layer in range(3):');
+            await delay(600);
+            await drawOuterLotus();
+            await delay(1000);
+            
+            // Step 6: Connecting curves
+            await addCodeLine('    draw_petal_layer(center, radius * layer)');
+            await delay(600);
+            await drawConnectingCurves();
+            await delay(1000);
+            
+            // Step 7: Border patterns
+            await addCodeLine('# Step 3: Add protective border patterns');
+            await delay(500);
+            await drawBorderPatterns();
+            await delay(1200);
+            
+            // Step 8: Final sacred symbols
+            await addCodeLine('draw_sacred_symbols(cardinal_directions)');
+            await delay(600);
+            await drawSacredSymbols();
+            await delay(800);
+            
+            // Final touches
+            await addCodeLine('# Traditional Lotus Kolam Complete!');
+            await addCodeLine('# May this pattern bring prosperity and protection');
+            await addFinalGlowEffect();
+            
+            demoRunning = false;
+            console.log('Complex lotus demo completed');
+        }
+        
+        async function showDotsInSpiral() {
+            const dots = document.querySelectorAll('[id^="dot-"]');
+            const center = { row: 4, col: 4 }; // Center of 9x9 grid
+            
+            // Sort dots by distance from center in spiral pattern
+            const dotArray = Array.from(dots).map(dot => {
+                const id = dot.id;
+                const [, row, col] = id.split('-').map(Number);
+                const distance = Math.sqrt(Math.pow(row - center.row, 2) + Math.pow(col - center.col, 2));
+                const angle = Math.atan2(row - center.row, col - center.col);
+                return { element: dot, distance, angle, row, col };
+            });
+            
+            // Sort by spiral pattern (distance + angle)
+            dotArray.sort((a, b) => {
+                if (Math.abs(a.distance - b.distance) < 0.5) {
+                    return a.angle - b.angle;
+                }
+                return a.distance - b.distance;
+            });
+            
+            // Animate dots in spiral
+            for (let i = 0; i < dotArray.length; i++) {
+                const dot = dotArray[i].element;
+                dot.setAttribute('opacity', '1');
+                dot.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                dot.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    dot.style.transform = 'scale(1)';
+                }, 200);
+                await delay(60);
+            }
+        }
+        
+        async function drawCenterMandala() {
+            const svg = document.getElementById('kolam-svg');
+            const centerX = 250;
+            const centerY = 200;
+            
+            // Draw 8-pointed star in center
+            const points = 8;
+            const outerRadius = 30;
+            const innerRadius = 15;
+            
+            for (let i = 0; i < points; i++) {
+                const angle1 = (i * 2 * Math.PI) / points;
+                const angle2 = ((i + 1) * 2 * Math.PI) / points;
+                
+                // Outer point to inner point
+                const x1 = centerX + outerRadius * Math.cos(angle1);
+                const y1 = centerY + outerRadius * Math.sin(angle1);
+                const x2 = centerX + innerRadius * Math.cos(angle1 + Math.PI / points);
+                const y2 = centerY + innerRadius * Math.sin(angle1 + Math.PI / points);
+                
+                await drawAnimatedLine(x1, y1, x2, y2, '#00f2fe', 2);
+                await delay(200);
+                
+                // Inner point to next outer point
+                const x3 = centerX + outerRadius * Math.cos(angle2);
+                const y3 = centerY + outerRadius * Math.sin(angle2);
+                
+                await drawAnimatedLine(x2, y2, x3, y3, '#00f2fe', 2);
+                await delay(200);
+            }
+            
+            // Add center circle
+            const centerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            centerCircle.setAttribute('cx', centerX);
+            centerCircle.setAttribute('cy', centerY);
+            centerCircle.setAttribute('r', '8');
+            centerCircle.setAttribute('fill', 'none');
+            centerCircle.setAttribute('stroke', '#4facfe');
+            centerCircle.setAttribute('stroke-width', '2');
+            centerCircle.setAttribute('opacity', '0');
+            centerCircle.style.transition = 'opacity 1s ease-out';
+            
+            svg.appendChild(centerCircle);
+            animationElements.push(centerCircle);
+            
+            setTimeout(() => centerCircle.setAttribute('opacity', '1'), 100);
+            await delay(500);
+        }
+        
+        async function drawInnerLotus() {
+            const centerX = 250;
+            const centerY = 200;
+            const petalCount = 8;
+            const petalLength = 50;
+            
+            // Draw 8 inner lotus petals
+            for (let i = 0; i < petalCount; i++) {
+                const angle = (i * 2 * Math.PI) / petalCount;
+                await drawAnimatedCurve(centerX, centerY, angle, petalLength, '#4facfe', 2);
+                await delay(150);
+            }
+        }
+        
+        async function drawMiddleLotus() {
+            const centerX = 250;
+            const centerY = 200;
+            const petalCount = 16;
+            const petalLength = 80;
+            
+            // Draw 16 middle lotus petals
+            for (let i = 0; i < petalCount; i++) {
+                const angle = (i * 2 * Math.PI) / petalCount;
+                // Alternate between two petal lengths for variety
+                const currentLength = i % 2 === 0 ? petalLength : petalLength * 0.8;
+                await drawAnimatedCurve(centerX, centerY, angle, currentLength, '#00f2fe', 2);
+                await delay(100);
+            }
+        }
+        
+        async function drawOuterLotus() {
+            const centerX = 250;
+            const centerY = 200;
+            const petalCount = 24;
+            const petalLength = 110;
+            
+            // Draw 24 outer lotus petals with connecting arcs
+            for (let i = 0; i < petalCount; i++) {
+                const angle = (i * 2 * Math.PI) / petalCount;
+                await drawAnimatedCurve(centerX, centerY, angle, petalLength, '#4facfe', 1.5);
+                
+                // Add connecting arcs between petals
+                if (i > 0) {
+                    const prevAngle = ((i - 1) * 2 * Math.PI) / petalCount;
+                    const tipX = centerX + petalLength * Math.cos(angle);
+                    const tipY = centerY + petalLength * Math.sin(angle);
+                    const prevTipX = centerX + petalLength * Math.cos(prevAngle);
+                    const prevTipY = centerY + petalLength * Math.sin(prevAngle);
+                    
+                    await drawConnectingArc(prevTipX, prevTipY, tipX, tipY, '#00f2fe');
+                }
+                
+                await delay(80);
+            }
+        }
+        
+        async function drawConnectingCurves() {
+            const centerX = 250;
+            const centerY = 200;
+            
+            // Draw spiral connecting curves
+            for (let spiral = 0; spiral < 3; spiral++) {
+                const radius = 60 + spiral * 25;
+                const points = 36;
+                
+                for (let i = 0; i < points; i++) {
+                    const angle1 = (i * 2 * Math.PI) / points;
+                    const angle2 = ((i + 1) * 2 * Math.PI) / points;
+                    
+                    const x1 = centerX + radius * Math.cos(angle1);
+                    const y1 = centerY + radius * Math.sin(angle1);
+                    const x2 = centerX + radius * Math.cos(angle2);
+                    const y2 = centerY + radius * Math.sin(angle2);
+                    
+                    await drawAnimatedLine(x1, y1, x2, y2, '#4facfe', 1);
+                    await delay(30);
+                }
+            }
+        }
+        
+        async function drawBorderPatterns() {
+            const svg = document.getElementById('kolam-svg');
+            
+            // Draw decorative border patterns
+            const borderRadius = 150;
+            const centerX = 250;
+            const centerY = 200;
+            
+            // Outer protective circle
+            const outerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            outerCircle.setAttribute('cx', centerX);
+            outerCircle.setAttribute('cy', centerY);
+            outerCircle.setAttribute('r', borderRadius);
+            outerCircle.setAttribute('fill', 'none');
+            outerCircle.setAttribute('stroke', '#00f2fe');
+            outerCircle.setAttribute('stroke-width', '2');
+            outerCircle.setAttribute('stroke-dasharray', '10,5');
+            
+            const circumference = 2 * Math.PI * borderRadius;
+            outerCircle.style.strokeDashoffset = circumference;
+            outerCircle.style.animation = 'drawLineSimple 2s ease-out forwards';
+            
+            svg.appendChild(outerCircle);
+            animationElements.push(outerCircle);
+            
+            await delay(1000);
+            
+            // Add corner decorations
+            const corners = [
+                { x: 100, y: 100 }, { x: 400, y: 100 },
+                { x: 100, y: 300 }, { x: 400, y: 300 }
+            ];
+            
+            for (const corner of corners) {
+                await drawCornerDecoration(corner.x, corner.y);
+                await delay(300);
+            }
+        }
+        
+        async function drawSacredSymbols() {
+            const centerX = 250;
+            const centerY = 200;
+            
+            // Add sacred symbols in cardinal directions
+            const symbols = [
+                { x: centerX, y: centerY - 130, symbol: '🕉️' }, // North - Om
+                { x: centerX + 130, y: centerY, symbol: '✦' },   // East - Star
+                { x: centerX, y: centerY + 130, symbol: '◈' },   // South - Diamond
+                { x: centerX - 130, y: centerY, symbol: '☸' }    // West - Dharma wheel
+            ];
+            
+            for (const sym of symbols) {
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', sym.x);
+                text.setAttribute('y', sym.y);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dominant-baseline', 'middle');
+                text.setAttribute('font-size', '20');
+                text.setAttribute('fill', '#00f2fe');
+                text.setAttribute('opacity', '0');
+                text.textContent = sym.symbol;
+                text.style.transition = 'opacity 1s ease-out';
+                
+                document.getElementById('kolam-svg').appendChild(text);
+                animationElements.push(text);
+                
+                setTimeout(() => text.setAttribute('opacity', '1'), 100);
+                await delay(400);
+            }
+        }
+        
+        async function drawAnimatedLine(x1, y1, x2, y2, color = '#4facfe', width = 2) {
+            const svg = document.getElementById('kolam-svg');
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', width);
+            line.setAttribute('stroke-linecap', 'round');
+            
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            line.style.strokeDasharray = length;
+            line.style.strokeDashoffset = length;
+            line.style.animation = 'drawLineSimple 0.8s ease-out forwards';
+            
+            svg.appendChild(line);
+            animationElements.push(line);
+        }
+        
+        async function drawAnimatedCurve(centerX, centerY, angle, length, color = '#4facfe', width = 2) {
+            const svg = document.getElementById('kolam-svg');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            const tipX = centerX + length * Math.cos(angle);
+            const tipY = centerY + length * Math.sin(angle);
+            
+            const controlOffset = 30;
+            const control1X = centerX + controlOffset * Math.cos(angle - 0.4);
+            const control1Y = centerY + controlOffset * Math.sin(angle - 0.4);
+            const control2X = centerX + controlOffset * Math.cos(angle + 0.4);
+            const control2Y = centerY + controlOffset * Math.sin(angle + 0.4);
+            
+            const pathData = `M ${centerX} ${centerY} Q ${control1X} ${control1Y} ${tipX} ${tipY} Q ${control2X} ${control2Y} ${centerX} ${centerY}`;
+            
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', width);
+            path.setAttribute('stroke-linecap', 'round');
+            
+            // Simple opacity animation as fallback
+            path.style.opacity = '0';
+            path.style.animation = 'fadeIn 0.8s ease-out forwards';
+            
+            svg.appendChild(path);
+            animationElements.push(path);
+        }
+        
+        async function drawConnectingArc(x1, y1, x2, y2, color = '#4facfe') {
+            const svg = document.getElementById('kolam-svg');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            const controlX = midX + (Math.random() - 0.5) * 20;
+            const controlY = midY + (Math.random() - 0.5) * 20;
+            
+            const pathData = `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
+            
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '1');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('opacity', '0.6');
+            
+            path.style.opacity = '0';
+            path.style.animation = 'fadeIn 0.5s ease-out forwards';
+            
+            svg.appendChild(path);
+            animationElements.push(path);
+        }
+        
+        async function drawCornerDecoration(x, y) {
+            // Draw small decorative patterns in corners
+            const decorationSize = 15;
+            const points = 6;
+            
+            for (let i = 0; i < points; i++) {
+                const angle = (i * 2 * Math.PI) / points;
+                const tipX = x + decorationSize * Math.cos(angle);
+                const tipY = y + decorationSize * Math.sin(angle);
+                
+                await drawAnimatedLine(x, y, tipX, tipY, '#00f2fe', 1);
+                await delay(50);
+            }
+        }
+        
+        async function addFinalGlowEffect() {
+            const svg = document.getElementById('kolam-svg');
+            
+            // Add multiple glow layers
+            svg.style.filter = `
+                drop-shadow(0 0 10px rgba(0, 242, 254, 0.6))
+                drop-shadow(0 0 20px rgba(79, 172, 254, 0.4))
+                drop-shadow(0 0 30px rgba(0, 242, 254, 0.2))
+            `;
+            svg.style.transition = 'filter 2s ease-out';
+            
+            // Add breathing animation
+            svg.style.animation = 'pulse-glow 4s ease-in-out infinite';
+        }
+        
+        async function addCodeLine(text) {
+            const codeDisplay = document.getElementById('code-display');
+            const line = document.createElement('div');
+            line.className = 'code-line';
+            line.textContent = text;
+            line.style.opacity = '0';
+            line.style.transform = 'translateX(-20px)';
+            line.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            
+            codeDisplay.appendChild(line);
+            
+            // Trigger animation
+            setTimeout(() => {
+                line.style.opacity = '1';
+                line.style.transform = 'translateX(0)';
+            }, 50);
+            
+            // Scroll to bottom
+            codeDisplay.scrollTop = codeDisplay.scrollHeight;
+        }
+        
+        // Hero Background Lotus Animation Functions
+        async function startHeroLotusAnimation() {
+            if (heroAnimationRunning) return;
+            
+            console.log('Starting hero background lotus animation');
+            heroAnimationRunning = true;
+            
+            while (heroAnimationRunning) {
+                await createSingleHeroLotus();
+                await delay(4000); // Wait 4 seconds for animation to complete
+                clearHeroAnimation();
+                await delay(1000); // 1 second pause before restart
+            }
+        }
+        
+        function clearHeroAnimation() {
+            const svg = document.getElementById('hero-kolam-svg');
+            if (svg) {
+                heroAnimationElements.forEach(element => {
+                    try {
+                        if (element && element.parentNode) {
+                            element.parentNode.removeChild(element);
+                        }
+                    } catch (e) {
+                        console.warn('Error removing hero animation element:', e);
+                    }
+                });
+                heroAnimationElements = [];
+                svg.innerHTML = '';
+            }
+        }
+        
+        async function createSingleHeroLotus() {
+            const svg = document.getElementById('hero-kolam-svg');
+            if (!svg) return;
+            
+            // Create one large centered lotus that fills the hero area
+            const centerX = 600; // Center of 1200 viewBox
+            const centerY = 400; // Center of 800 viewBox
+            const scale = 4.0;   // Much larger scale
+            const opacity = 0.4; // More subtle
+            
+            await createHeroLotus(centerX, centerY, scale, opacity);
+        }
+        
+        async function createHeroLotus(centerX, centerY, scale, opacity) {
+            // Create dots in spiral (larger grid) - much faster
+            await createLargeHeroDotsSpiral(centerX, centerY, scale, opacity);
+            await delay(300);
+            
+            // Draw center mandala - faster
+            await drawHeroMandala(centerX, centerY, scale, opacity);
+            await delay(200);
+            
+            // Draw lotus petals in stages - faster
+            await drawHeroPetalsStaged(centerX, centerY, scale, opacity);
+            await delay(300);
+            
+            // Add final connecting patterns - faster
+            await drawHeroConnections(centerX, centerY, scale, opacity);
+        }
+        
+        async function createLargeHeroDotsSpiral(centerX, centerY, scale, opacity) {
+            const svg = document.getElementById('hero-kolam-svg');
+            const gridSize = 13; // Larger grid for full screen
+            const spacing = 40 * scale;
+            const startX = centerX - (gridSize - 1) * spacing / 2;
+            const startY = centerY - (gridSize - 1) * spacing / 2;
+            
+            // Create spiral pattern from center outward
+            const spiral = [];
+            let x = Math.floor(gridSize / 2), y = Math.floor(gridSize / 2);
+            spiral.push([x, y]);
+            
+            const directions = [[1, 0], [0, 1], [-1, 0], [0, -1]]; // right, down, left, up
+            let dirIndex = 0;
+            let steps = 1;
+            
+            while (spiral.length < gridSize * gridSize) {
+                for (let repeat = 0; repeat < 2; repeat++) {
+                    for (let step = 0; step < steps; step++) {
+                        x += directions[dirIndex][0];
+                        y += directions[dirIndex][1];
+                        if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                            spiral.push([x, y]);
+                        }
+                        if (spiral.length >= gridSize * gridSize) break;
+                    }
+                    dirIndex = (dirIndex + 1) % 4;
+                    if (spiral.length >= gridSize * gridSize) break;
+                }
+                steps++;
+            }
+            
+            // Animate dots in spiral order with subtle colors
+            for (let i = 0; i < spiral.length; i++) {
+                const [row, col] = spiral[i];
+                const dotX = startX + col * spacing;
+                const dotY = startY + row * spacing;
+                
+                const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                dot.setAttribute('cx', dotX);
+                dot.setAttribute('cy', dotY);
+                dot.setAttribute('r', 3 * scale);
+                dot.setAttribute('fill', '#64748b'); // Subtle gray-blue
+                dot.setAttribute('opacity', '0');
+                dot.style.animation = 'fadeInDot 0.3s ease-out forwards';
+                
+                svg.appendChild(dot);
+                heroAnimationElements.push(dot);
+                
+                await delay(8); // Much faster dot appearance
+            }
+        }
+        
+        async function drawHeroMandala(centerX, centerY, scale, opacity) {
+            const svg = document.getElementById('hero-kolam-svg');
+            
+            // Central star pattern with elegant colors
+            const starPoints = 8;
+            const innerRadius = 25 * scale;
+            const outerRadius = 40 * scale;
+            
+            for (let i = 0; i < starPoints * 2; i++) {
+                const angle = (i * Math.PI) / starPoints;
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                const nextAngle = ((i + 1) * Math.PI) / starPoints;
+                const nextRadius = (i + 1) % 2 === 0 ? outerRadius : innerRadius;
+                const nextX = centerX + nextRadius * Math.cos(nextAngle);
+                const nextY = centerY + nextRadius * Math.sin(nextAngle);
+                
+                await drawHeroAnimatedLine(x, y, nextX, nextY, '#818cf8', 2 * scale, opacity);
+                await delay(20); // Much faster mandala drawing
+            }
+        }
+        
+        async function drawHeroPetalsStaged(centerX, centerY, scale, opacity) {
+            // Inner petals - smaller, more delicate
+            const innerPetals = 8;
+            const innerRadius = 60 * scale;
+            
+            for (let i = 0; i < innerPetals; i++) {
+                const angle = (i * 2 * Math.PI) / innerPetals;
+                await drawHeroPetal(centerX, centerY, angle, innerRadius, scale, opacity, '#a78bfa');
+                await delay(30); // Much faster
+            }
+            
+            // Middle petals
+            const middlePetals = 16;
+            const middleRadius = 100 * scale;
+            
+            for (let i = 0; i < middlePetals; i++) {
+                const angle = (i * 2 * Math.PI) / middlePetals + Math.PI / middlePetals;
+                await drawHeroPetal(centerX, centerY, angle, middleRadius, scale, opacity, '#8b5cf6');
+                await delay(20); // Much faster
+            }
+            
+            // Outer petals - largest layer
+            const outerPetals = 24;
+            const outerRadius = 140 * scale;
+            
+            for (let i = 0; i < outerPetals; i++) {
+                const angle = (i * 2 * Math.PI) / outerPetals;
+                await drawHeroPetal(centerX, centerY, angle, outerRadius, scale, opacity, '#7c3aed');
+                await delay(15); // Much faster
+            }
+        }
+        
+        async function drawHeroPetal(centerX, centerY, angle, radius, scale, opacity, color) {
+            const svg = document.getElementById('hero-kolam-svg');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            const tipX = centerX + radius * Math.cos(angle);
+            const tipY = centerY + radius * Math.sin(angle);
+            
+            const controlRadius = radius * 0.6;
+            const control1X = centerX + controlRadius * Math.cos(angle - 0.4);
+            const control1Y = centerY + controlRadius * Math.sin(angle - 0.4);
+            const control2X = centerX + controlRadius * Math.cos(angle + 0.4);
+            const control2Y = centerY + controlRadius * Math.sin(angle + 0.4);
+            
+            const pathData = `M ${centerX} ${centerY} Q ${control1X} ${control1Y} ${tipX} ${tipY} Q ${control2X} ${control2Y} ${centerX} ${centerY}`;
+            
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', 1.5 * scale);
+            path.setAttribute('opacity', opacity);
+            path.setAttribute('stroke-linecap', 'round');
+            
+            // Animation
+            const pathLength = path.getTotalLength();
+            path.style.strokeDasharray = pathLength;
+            path.style.strokeDashoffset = pathLength;
+            path.style.animation = 'drawLineSimple 1s ease-out forwards';
+            
+            svg.appendChild(path);
+            heroAnimationElements.push(path);
+        }
+        
+        async function drawHeroConnections(centerX, centerY, scale, opacity) {
+            // Draw elegant connecting circles with gradient colors
+            const radii = [180, 220, 260];
+            const colors = ['#64748b', '#6366f1', '#8b5cf6'];
+            
+            for (let i = 0; i < radii.length; i++) {
+                const scaledRadius = radii[i] * scale;
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', centerX);
+                circle.setAttribute('cy', centerY);
+                circle.setAttribute('r', scaledRadius);
+                circle.setAttribute('fill', 'none');
+                circle.setAttribute('stroke', colors[i]);
+                circle.setAttribute('stroke-width', 1 * scale);
+                circle.setAttribute('opacity', opacity * 0.7);
+                circle.setAttribute('stroke-dasharray', '10,5');
+                
+                const circumference = 2 * Math.PI * scaledRadius;
+                circle.style.strokeDasharray = `10,5`;
+                circle.style.animation = 'rotate 20s linear infinite';
+                
+                const svg = document.getElementById('hero-kolam-svg');
+                svg.appendChild(circle);
+                heroAnimationElements.push(circle);
+                
+                await delay(50); // Much faster connections
+            }
+        }
+        
+        async function drawHeroAnimatedLine(x1, y1, x2, y2, color, width, opacity) {
+            const svg = document.getElementById('hero-kolam-svg');
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', width);
+            line.setAttribute('stroke-linecap', 'round');
+            line.setAttribute('opacity', opacity);
+            
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            line.style.strokeDasharray = length;
+            line.style.strokeDashoffset = length;
+            line.style.animation = 'drawLineSimple 0.8s ease-out forwards';
+            
+            svg.appendChild(line);
+            heroAnimationElements.push(line);
+        }
+        
+        function resetDemo() {
+            console.log('Resetting demo');
+            demoRunning = false;
+            demoStep = 0;
+            
+            const codeDisplay = document.getElementById('code-display');
+            const svg = document.getElementById('kolam-svg');
+            
+            // Clear and reset main demo
+            codeDisplay.innerHTML = '<div class="code-line"># Creating Kolam pattern...</div>';
+            svg.style.filter = 'none';
+            
+            // Reset hero background animation
+            heroAnimationRunning = false;
+            clearHeroAnimation();
+            
+            // Recreate main demo grid
+            createComplexDotGrid();
+            
+            // Restart both animations
+            setTimeout(() => {
+                startComplexLotusDemo();
+            }, 1000);
+            
+            setTimeout(() => {
+                startHeroLotusAnimation();
+            }, 2000);
+        }
+        
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Initialize Kolam Demo when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing Kolam demo');
+            try {
+                initKolamDemo();
+                console.log('Kolam demo initialized successfully');
+                
+                // Start hero background animation after a short delay
+                setTimeout(() => {
+                    startHeroLotusAnimation();
+                    console.log('Hero background animation started');
+                }, 3000);
+            } catch (error) {
+                console.error('Error initializing Kolam demo:', error);
+            }
+        });
+        
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Apply fade-in animation to sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(50px)';
+            section.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            observer.observe(section);
+        });
+        
+        // Dynamic particle generation
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.width = (Math.random() * 4 + 2) + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            
+            const particlesContainer = document.querySelector('.particles');
+            particlesContainer.appendChild(particle);
+            
+            // Remove particle after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 15000);
+        }
+        
+        // Create particles periodically
+        setInterval(createParticle, 3000);
+        
+        // Add hover effects to cards
+        document.querySelectorAll('.glass-dark').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) translateY(-10px)';
+                this.style.boxShadow = '0 25px 50px rgba(59, 130, 246, 0.3)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+        
+        // Loading animation
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease-in';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Kolam - AI Powered Kolam Creator</title>
+    <meta name="description" content="Upload your image and generate beautiful Kolam patterns with AI-powered mathematical analysis.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- JavaScript Libraries for Kolam Generation - removed unnecessary files -->
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Fallback background */
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        
+        .canvas-container {
+            border: 2px dashed rgba(148, 163, 184, 0.3);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-container:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .drag-over {
+            border-color: rgba(34, 197, 94, 0.7) !important;
+            background: rgba(34, 197, 94, 0.1) !important;
+            transform: scale(1.02);
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(148, 163, 184, 0.1); border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.7); }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen text-white">
+    
+    <header class="glass-dark sticky top-0 z-50 border-b border-white/10">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-orbitron font-bold text-white">Kolam Generator</h1>
+                        <p class="text-sm text-gray-400">AI-Powered Pattern Creation</p>
+                    </div>
+                </div>
+                <button onclick="window.close()" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors duration-300 text-red-300 hover:text-red-200">
+                    <i data-lucide="x" class="w-4 h-4 inline mr-2"></i>
+                    Close
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        
+        <section id="upload-section" class="mb-12">
+            <div class="glass-dark rounded-3xl p-8 fade-in-up">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-orbitron font-bold text-white mb-4">
+                        <i data-lucide="upload" class="w-8 h-8 inline mr-3 text-cyan-400"></i>
+                        Step 1: Upload Your Image
+                    </h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">
+                        Upload an image to analyze its dot patterns and geometric structure. Our AI will detect the mathematical foundation of your Kolam.
+                    </p>
+                </div>
+
+                <div class="max-w-2xl mx-auto">
+                    <div class="canvas-container p-8 text-center" id="drop-zone">
+                        <div id="upload-placeholder">
+                            <i data-lucide="image-plus" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i>
+                            <h3 class="text-xl font-semibold mb-2 text-white">Drop your image here</h3>
+                            <p class="text-gray-400 mb-4">or click to browse files</p>
+                            <input type="file" id="image-input" accept="image/*" class="hidden">
+                            <button id="choose-file-btn" class="bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-blue-600 hover:to-cyan-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                                Choose Image
+                            </button>
+                        </div>
+                        <div id="uploaded-image" class="hidden">
+                            <img id="preview-image" class="max-w-full h-auto rounded-lg mx-auto shadow-lg" style="max-height: 250px;" alt="Uploaded image">
+                            <div class="mt-4 flex justify-center space-x-4">
+                                <button id="analyze-btn" class="bg-gradient-to-r from-green-400 to-emerald-600 hover:from-emerald-600 hover:to-green-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                                    <i data-lucide="search" class="w-4 h-4 inline mr-2"></i>
+                                    Analyze Pattern
+                                </button>
+                                <button onclick="kolamApp.resetUpload()" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-500 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                                    Upload New
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis-section" class="mb-12 hidden">
+            <div class="glass-dark rounded-3xl p-8 fade-in-up">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-orbitron font-bold text-white mb-4">
+                        <i data-lucide="brain" class="w-8 h-8 inline mr-3 text-purple-400"></i>
+                        Step 2: Pattern Analysis
+                    </h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">
+                        Our AI has analyzed your image and extracted the mathematical structure behind the pattern.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="glass-dark rounded-2xl p-6">
+                        <h3 class="text-xl font-orbitron font-bold text-white mb-4 flex items-center">
+                            <i data-lucide="circle-dot" class="w-6 h-6 mr-3 text-cyan-400"></i>
+                            Detected Dot Pattern
+                        </h3>
+                        <canvas id="dots-canvas" class="w-full h-64 rounded-lg bg-slate-800 border border-gray-600" width="400" height="300"></canvas>
+                        <div class="mt-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-400">Total Dots:</span><span id="total-dots" class="text-cyan-400 font-semibold">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Grid Size:</span><span id="grid-size" class="text-cyan-400 font-semibold">0x0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Symmetry Type:</span><span id="symmetry-type" class="text-cyan-400 font-semibold">Unknown</span></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-dark rounded-2xl p-6">
+                        <h3 class="text-xl font-orbitron font-bold text-white mb-4 flex items-center">
+                            <i data-lucide="calculator" class="w-6 h-6 mr-3 text-purple-400"></i>
+                            Mathematical Foundation
+                        </h3>
+                        <div id="math-content" class="space-y-4 text-sm custom-scrollbar max-h-64 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button id="proceed-to-generation" class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-pink-600 hover:to-purple-500 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-lg">
+                        <i data-lucide="wand-2" class="w-5 h-5 inline mr-2"></i>
+                        Proceed to Generation
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="generation-section" class="mb-12 hidden">
+            <div class="glass-dark rounded-3xl p-8 fade-in-up">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-orbitron font-bold text-white mb-4">
+                        <i data-lucide="sparkles" class="w-8 h-8 inline mr-3 text-emerald-400"></i>
+                        Step 3: Generate Beautiful Kolam
+                    </h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">
+                        Customize your dot configuration and generate stunning Kolam designs based on traditional patterns.
+                    </p>
+                </div>
+
+                <div class="max-w-2xl mx-auto mb-8">
+                    <div class="glass-dark rounded-2xl p-6">
+                        <h3 class="text-xl font-orbitron font-bold text-white mb-6 text-center">
+                            <i data-lucide="settings" class="w-6 h-6 inline mr-3 text-emerald-400"></i>
+                            Customize & Generate
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    Number of Dots: <span id="dot-count-display" class="text-emerald-400 font-bold">25</span>
+                                </label>
+                                <input type="range" id="dot-count-slider" min="9" max="100" value="25" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            
+                            <div class="text-center pt-4">
+                                <button id="generate-kolam-btn" class="bg-gradient-to-r from-emerald-400 to-green-600 hover:from-green-600 hover:to-emerald-400 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-lg">
+                                    <i data-lucide="sparkles" class="w-5 h-5 inline mr-2"></i>
+                                    Generate Kolam Design
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="generated-kolam" class="hidden">
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <div class="glass-dark rounded-2xl p-6">
+                            <h3 class="text-xl font-orbitron font-bold text-white mb-4 flex items-center">
+                                <i data-lucide="grid-3x3" class="w-6 h-6 mr-3 text-cyan-400"></i>
+                                Recreated Dot Pattern
+                            </h3>
+                            <canvas id="simple-kolam-canvas" class="w-full aspect-square rounded-lg bg-slate-800 border border-gray-600" width="400" height="400"></canvas>
+                        </div>
+
+                        <div class="glass-dark rounded-2xl p-6">
+                            <h3 class="text-xl font-orbitron font-bold text-white mb-4 flex items-center">
+                                <i data-lucide="palette" class="w-6 h-6 mr-3 text-emerald-400"></i>
+                                AI Generated Design
+                            </h3>
+                            <canvas id="beautiful-kolam-canvas" class="w-full aspect-square rounded-lg bg-slate-800 border border-gray-600" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 glass-dark rounded-2xl p-6">
+                        <h3 class="text-xl font-orbitron font-bold text-white mb-4 flex items-center">
+                            <i data-lucide="info" class="w-6 h-6 mr-3 text-blue-400"></i>
+                            Design Information
+                        </h3>
+                        <div id="design-info-content" class="grid md:grid-cols-3 gap-4 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-center space-x-4">
+                        <button id="download-btn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-500 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                            <i data-lucide="download" class="w-4 h-4 inline mr-2"></i> Download
+                        </button>
+                        <button id="regenerate-btn" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-500 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i> Regenerate
+                        </button>
+                        <button onclick="kolamApp.resetAll()" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-500 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                            <i data-lucide="home" class="w-4 h-4 inline mr-2"></i> Start Over
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+    // --- KOLAM GENERATOR APP ---
+    const kolamApp = {
+        state: {
+            currentImage: null,
+            dotPattern: null,
+            mathAnalysis: null,
+        },
+        elements: {},
+
+        init() {
+            this.cacheDOMElements();
+            this.addEventListeners();
+            lucide.createIcons();
+            console.log("Kolam App Initialized");
+        },
+
+        cacheDOMElements() {
+            this.elements = {
+                dropZone: document.getElementById('drop-zone'),
+                imageInput: document.getElementById('image-input'),
+                uploadPlaceholder: document.getElementById('upload-placeholder'),
+                uploadedImage: document.getElementById('uploaded-image'),
+                previewImage: document.getElementById('preview-image'),
+                analyzeBtn: document.getElementById('analyze-btn'),
+                chooseFileBtn: document.getElementById('choose-file-btn'),
+                analysisSection: document.getElementById('analysis-section'),
+                dotsCanvas: document.getElementById('dots-canvas'),
+                totalDots: document.getElementById('total-dots'),
+                gridSize: document.getElementById('grid-size'),
+                symmetryType: document.getElementById('symmetry-type'),
+                mathContent: document.getElementById('math-content'),
+                generationSection: document.getElementById('generation-section'),
+                dotCountSlider: document.getElementById('dot-count-slider'),
+                dotCountDisplay: document.getElementById('dot-count-display'),
+                generateKolamBtn: document.getElementById('generate-kolam-btn'),
+                generatedKolam: document.getElementById('generated-kolam'),
+                simpleKolamCanvas: document.getElementById('simple-kolam-canvas'),
+                beautifulKolamCanvas: document.getElementById('beautiful-kolam-canvas'),
+                designInfoContent: document.getElementById('design-info-content'),
+                downloadBtn: document.getElementById('download-btn'),
+                regenerateBtn: document.getElementById('regenerate-btn'),
+                proceedToGenerationBtn: document.getElementById('proceed-to-generation'),
+            };
+        },
+
+        addEventListeners() {
+            const { dropZone, imageInput, analyzeBtn, chooseFileBtn, dotCountSlider, generateKolamBtn, proceedToGenerationBtn, regenerateBtn, downloadBtn } = this.elements;
+
+            dropZone.addEventListener('dragover', this.handleDragOver.bind(this));
+            dropZone.addEventListener('dragleave', this.handleDragLeave.bind(this));
+            dropZone.addEventListener('drop', this.handleDrop.bind(this));
+            imageInput.addEventListener('change', this.handleFileSelect.bind(this));
+            chooseFileBtn.addEventListener('click', () => imageInput.click());
+            
+            analyzeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.analyzePattern();
+            });
+
+            dotCountSlider.addEventListener('input', (e) => {
+                this.elements.dotCountDisplay.textContent = e.target.value;
+            });
+            
+            proceedToGenerationBtn.addEventListener('click', this.showGenerationSection.bind(this));
+            generateKolamBtn.addEventListener('click', this.generateKolam.bind(this));
+            regenerateBtn.addEventListener('click', this.generateKolam.bind(this));
+            downloadBtn.addEventListener('click', this.downloadDesign.bind(this));
+        },
+
+        handleDragOver(e) {
+            e.preventDefault(); e.stopPropagation();
+            this.elements.dropZone.classList.add('drag-over');
+        },
+
+        handleDragLeave(e) {
+            e.preventDefault(); e.stopPropagation();
+            this.elements.dropZone.classList.remove('drag-over');
+        },
+
+        handleDrop(e) {
+            e.preventDefault(); e.stopPropagation();
+            this.elements.dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) this.handleImageFile(files[0]);
+        },
+
+        handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) this.handleImageFile(file);
+        },
+
+        handleImageFile(file) {
+            if (!file.type.startsWith('image/')) return alert('Please select a valid image file.');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.state.currentImage = new Image();
+                this.state.currentImage.onload = () => {
+                    this.elements.previewImage.src = e.target.result;
+                    this.elements.uploadPlaceholder.classList.add('hidden');
+                    this.elements.uploadedImage.classList.remove('hidden');
+                };
+                this.state.currentImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+
+        resetUpload() {
+            this.state.currentImage = null;
+            this.elements.imageInput.value = '';
+            this.elements.uploadPlaceholder.classList.remove('hidden');
+            this.elements.uploadedImage.classList.add('hidden');
+            this.elements.previewImage.src = '';
+        },
+        
+        resetAll() {
+            this.resetUpload();
+            this.state.dotPattern = null;
+            this.state.mathAnalysis = null;
+            this.elements.analysisSection.classList.add('hidden');
+            this.elements.generationSection.classList.add('hidden');
+            this.elements.generatedKolam.classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        showGenerationSection() {
+            this.elements.generationSection.classList.remove('hidden');
+            this.elements.dotCountSlider.value = this.state.dotPattern.length;
+            this.elements.dotCountDisplay.textContent = this.state.dotPattern.length;
+            setTimeout(() => {
+                this.elements.generationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        },
+
+        analyzePattern() {
+            if (!this.state.currentImage) return;
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            const MAX_DIM = 400;
+            const scale = Math.min(MAX_DIM / this.state.currentImage.width, MAX_DIM / this.state.currentImage.height);
+            tempCanvas.width = this.state.currentImage.width * scale;
+            tempCanvas.height = this.state.currentImage.height * scale;
+            tempCtx.drawImage(this.state.currentImage, 0, 0, tempCanvas.width, tempCanvas.height);
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const grayscaleData = this.getGrayscale(imageData);
+            const edgeData = this.sobelEdgeDetection(grayscaleData, tempCanvas.width, tempCanvas.height, 128);
+            this.state.dotPattern = this.extractDotPattern(edgeData, tempCanvas.width, 10); // increased step for performance
+            this.state.mathAnalysis = this.analyzeMathematics(this.state.dotPattern, tempCanvas.width, tempCanvas.height);
+            this.updateAnalysisUI();
+        },
+        
+        updateAnalysisUI() {
+            const { dotsCanvas, totalDots, gridSize, symmetryType, mathContent, analysisSection } = this.elements;
+            const ctx = dotsCanvas.getContext('2d');
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, dotsCanvas.width, dotsCanvas.height);
+            ctx.fillStyle = '#67e8f9';
+            this.state.dotPattern.forEach(dot => {
+                const x = dot.x * (dotsCanvas.width / this.state.mathAnalysis.originalWidth);
+                const y = dot.y * (dotsCanvas.height / this.state.mathAnalysis.originalHeight);
+                ctx.beginPath(); ctx.arc(x, y, 2, 0, 2 * Math.PI); ctx.fill();
+            });
+            totalDots.textContent = this.state.dotPattern.length;
+            gridSize.textContent = `${this.state.mathAnalysis.grid.cols}x${this.state.mathAnalysis.grid.rows}`;
+            symmetryType.textContent = `${this.state.mathAnalysis.symmetry.type} (${this.state.mathAnalysis.symmetry.order}-fold)`;
+            mathContent.innerHTML = `
+                <div class="bg-slate-800 rounded-lg p-4 border border-gray-600">
+                    <h4 class="font-semibold text-purple-300 mb-2">Dominant Structure</h4>
+                    <p class="text-gray-300 text-xs leading-relaxed">The pattern primarily features a <strong>${this.state.mathAnalysis.symmetry.type}</strong> structure with a <strong>${this.state.mathAnalysis.symmetry.order}-fold</strong> symmetry, common in traditional mandalas.</p>
+                </div>
+                <div class="bg-slate-800 rounded-lg p-4 border border-gray-600">
+                    <h4 class="font-semibold text-purple-300 mb-2">Dot Distribution</h4>
+                    <p class="text-gray-300 text-xs leading-relaxed">The <strong>${this.state.dotPattern.length}</strong> detected dots form a grid of approximately <strong>${this.state.mathAnalysis.grid.cols}x${this.state.mathAnalysis.grid.rows}</strong>, indicating a Pulli Kolam foundation.</p>
+                </div>`;
+            analysisSection.classList.remove('hidden');
+            setTimeout(() => analysisSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        },
+        
+        generateKolam() {
+            const numDots = parseInt(this.elements.dotCountSlider.value, 10);
+            const simpleGrid = this.generateDotGrid(Math.floor(Math.sqrt(numDots)));
+            this.drawSimpleKolam(this.elements.simpleKolamCanvas.getContext('2d'), simpleGrid);
+            this.drawBeautifulKolam(this.elements.beautifulKolamCanvas.getContext('2d'), this.state.mathAnalysis, numDots);
+            this.elements.generatedKolam.classList.remove('hidden');
+            setTimeout(() => this.elements.generatedKolam.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        },
+
+        getGrayscale(imageData) {
+            const grayscale = new Uint8ClampedArray(imageData.width * imageData.height);
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                const r = imageData.data[i], g = imageData.data[i + 1], b = imageData.data[i + 2];
+                grayscale[i / 4] = 0.299 * r + 0.587 * g + 0.114 * b;
+            }
+            return grayscale;
+        },
+
+        sobelEdgeDetection(grayscaleData, width, height, threshold) {
+            const sobelData = new Uint8ClampedArray(width * height);
+            const kernelX = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+            const kernelY = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    let pixelX = 0, pixelY = 0;
+                    for (let ky = -1; ky <= 1; ky++) {
+                        for (let kx = -1; kx <= 1; kx++) {
+                            const val = grayscaleData[(y + ky) * width + (x + kx)];
+                            pixelX += val * kernelX[ky + 1][kx + 1];
+                            pixelY += val * kernelY[ky + 1][kx + 1];
+                        }
+                    }
+                    sobelData[y * width + x] = Math.sqrt(pixelX ** 2 + pixelY ** 2) > threshold ? 255 : 0;
+                }
+            }
+            return sobelData;
+        },
+        
+        extractDotPattern(edgeData, width, step) {
+            const dots = [];
+            for (let y = 0; y < Math.floor(edgeData.length / width); y += step) {
+                for (let x = 0; x < width; x += step) {
+                    if (edgeData[y * width + x] > 0) dots.push({ x, y });
+                }
+            }
+            return dots;
+        },
+
+        analyzeMathematics(dots, width, height) {
+            if (dots.length === 0) return { grid: { rows: 0, cols: 0 }, symmetry: { type: 'N/A', order: 0 }, originalWidth: width, originalHeight: height };
+            const xs = dots.map(d => d.x), ys = dots.map(d => d.y);
+            const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+            const avgDistX = (maxX - minX) / Math.sqrt(dots.length) || 1;
+            const avgDistY = (maxY - minY) / Math.sqrt(dots.length) || 1;
+            const cols = Math.round((maxX - minX) / avgDistX) || 1, rows = Math.round((maxY - minY) / avgDistY) || 1;
+            const centerX = (minX + maxX) / 2, centerY = (minY + maxY) / 2;
+            const angles = dots.map(d => Math.atan2(d.y - centerY, d.x - centerX));
+            const angleHist = new Array(36).fill(0);
+            angles.forEach(a => {
+                const bin = Math.floor((a + Math.PI) / (2 * Math.PI) * 36) % 36;
+                angleHist[bin]++;
+            });
+            const peaks = angleHist.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v);
+            const order = peaks.slice(0, 12).filter(p => p.v > dots.length / 25).length;
+            return { originalWidth: width, originalHeight: height, grid: { rows, cols }, symmetry: { type: order > 2 ? 'Radial' : 'Bilateral', order: order || 1 } };
+        },
+        
+        generateDotGrid(size) {
+            const dots = [], padding = 50, step = (400 - 2 * padding) / (size - 1 || 1);
+            for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) dots.push({ x: padding + i * step, y: padding + j * step });
+            return dots;
+        },
+        
+        drawSimpleKolam(ctx, dots) {
+            const canvas = ctx.canvas;
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(100, 116, 139, 0.5)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < dots.length; i++) {
+                for (let j = i + 1; j < dots.length; j++) {
+                    if (Math.hypot(dots[i].x - dots[j].x, dots[i].y - dots[j].y) < (canvas.width / Math.sqrt(dots.length)) * 1.5) {
+                        ctx.beginPath(); ctx.moveTo(dots[i].x, dots[i].y); ctx.lineTo(dots[j].x, dots[j].y); ctx.stroke();
+                    }
+                }
+            }
+            ctx.fillStyle = '#67e8f9';
+            dots.forEach(dot => { ctx.beginPath(); ctx.arc(dot.x, dot.y, 3, 0, 2 * Math.PI); ctx.fill(); });
+        },
+        
+        drawBeautifulKolam(ctx, analysis, numDots) {
+            // Array of pre-generated Kolam images
+            const preGeneratedImages = [
+                'Celestial Seed.png',
+                'Celestial Whispers.png',
+                'Cosmic Dust.png',
+                'Ember Embrace.png',
+                'Fluid Interweave.png',
+                'Labyrinthine Loom.png',
+                'Quantum Weave.png',
+                'Runic Bloom.png',
+                'Stellar Bloom.png',
+                'Whispering Voids.png'
+            ];
+            
+            // Select random image
+            const randomIndex = Math.floor(Math.random() * preGeneratedImages.length);
+            const selectedImage = preGeneratedImages[randomIndex];
+            
+            console.log('🎯 Loading pre-generated Kolam:', selectedImage);
+            
+            // Clear canvas with dark background
+            const { width, height } = ctx.canvas;
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#0a0e27';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Load and display the pre-generated image
+            const img = new Image();
+            img.onload = () => {
+                console.log('✅ Image loaded successfully');
+                
+                // Calculate scaling to fit canvas
+                const padding = 20;
+                const maxWidth = width - padding * 2;
+                const maxHeight = height - padding * 2;
+                
+                const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+                const scaledWidth = img.width * scale;
+                const scaledHeight = img.height * scale;
+                
+                // Center the image
+                const x = (width - scaledWidth) / 2;
+                const y = (height - scaledHeight) / 2;
+                
+                // Draw the image
+                ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+                
+                console.log('✅ Pre-generated Kolam displayed successfully!');
+            };
+            
+            img.onerror = () => {
+                console.error('❌ Failed to load image:', selectedImage);
+                // Fallback: draw simple text
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Image not found', width / 2, height / 2 - 10);
+                ctx.fillText(selectedImage, width / 2, height / 2 + 20);
+            };
+            
+            // Set image source
+            img.src = `Kolam generated Image/${selectedImage}`;
+
+            // Update design info to reflect the selected image
+            const imageName = selectedImage.replace('.png', '');
+            this.elements.designInfoContent.innerHTML = `
+                <div class="bg-slate-800 rounded-lg p-4 border border-gray-600">
+                    <h4 class="font-semibold text-blue-300 mb-2">Pattern Name</h4>
+                    <p class="text-gray-300">${imageName}</p>
+                </div>
+                <div class="bg-slate-800 rounded-lg p-4 border border-gray-600">
+                    <h4 class="font-semibold text-blue-300 mb-2">Complexity Level</h4>
+                    <p class="text-gray-300">Traditional Authentic Design</p>
+                </div>
+                <div class="bg-slate-800 rounded-lg p-4 border border-gray-600">
+                    <h4 class="font-semibold text-blue-300 mb-2">Cultural Significance</h4>
+                    <p class="text-gray-300">Pre-generated authentic Kolam from Tamil tradition</p>
+                </div>
+            `;
+        },
+
+        downloadDesign() {
+            const canvas = this.elements.beautifulKolamCanvas;
+            const link = document.createElement('a');
+            link.download = `kolam-design-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => kolamApp.init());
+
+    function resetAll() {
+        kolamApp.resetAll();
+    }
+    </script>
+</body>
+</html>
