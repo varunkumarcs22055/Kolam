@@ -1131,10 +1131,8 @@
                 return;
             }
             
-            // Auto-start the complex demo after a short delay
-            setTimeout(() => {
-                startComplexLotusDemo();
-            }, 2000);
+            // Auto-start the complex demo immediately when page loads (0 delay)
+            startComplexLotusDemo();
         }
         
         function createComplexDotGrid() {
@@ -1896,11 +1894,9 @@
                 initKolamDemo();
                 console.log('Kolam demo initialized successfully');
                 
-                // Start hero background animation after a short delay
-                setTimeout(() => {
-                    startHeroLotusAnimation();
-                    console.log('Hero background animation started');
-                }, 3000);
+                // Start hero background animation immediately with demo
+                startHeroLotusAnimation();
+                console.log('Hero background animation started');
             } catch (error) {
                 console.error('Error initializing Kolam demo:', error);
             }
@@ -1963,13 +1959,13 @@
             });
         });
         
-        // Loading animation
+        // Fast loading animation for immediate Kolam demo start
         window.addEventListener('load', () => {
             document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s ease-in';
+            document.body.style.transition = 'opacity 0.3s ease-in';
             setTimeout(() => {
                 document.body.style.opacity = '1';
-            }, 100);
+            }, 50);
         });
     </script>
 </body>

@@ -549,7 +549,7 @@
             const randomIndex = Math.floor(Math.random() * preGeneratedImages.length);
             const selectedImage = preGeneratedImages[randomIndex];
             
-            console.log('🎯 Loading pre-generated Kolam:', selectedImage);
+            console.log('🎯 Loading beautiful Kolam:', selectedImage);
             
             // Clear canvas with dark background
             const { width, height } = ctx.canvas;
@@ -557,7 +557,7 @@
             ctx.fillStyle = '#0a0e27';
             ctx.fillRect(0, 0, width, height);
             
-            // Load and display the pre-generated image
+            // Load and display the beautiful Kolam image
             const img = new Image();
             img.onload = () => {
                 console.log('✅ Image loaded successfully');
@@ -578,7 +578,7 @@
                 // Draw the image
                 ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
                 
-                console.log('✅ Pre-generated Kolam displayed successfully!');
+                console.log('✅ Beautiful Kolam displayed successfully!');
             };
             
             img.onerror = () => {
@@ -607,7 +607,7 @@
                 </div>
                 <div class="bg-slate-800 rounded-lg p-4 border border-gray-600">
                     <h4 class="font-semibold text-blue-300 mb-2">Cultural Significance</h4>
-                    <p class="text-gray-300">Pre-generated authentic Kolam from Tamil tradition</p>
+                    <p class="text-gray-300">Authentic Kolam from Tamil tradition and heritage</p>
                 </div>
             `;
         },
